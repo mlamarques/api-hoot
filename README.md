@@ -43,3 +43,8 @@ git init
 ```
 
 ### Create the main file (app.js)
+
+### Require all dependencies
+
+### Connect to database
+
