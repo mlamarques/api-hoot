@@ -63,7 +63,7 @@ app.post('/usercheck', function(req, res) {
         if(user) {
             return res.status(200).json({message: "User found", isFound: true})
         } else {
-            return res.status(403).json({message: "User not found", isFound: false})
+            return res.json({message: "User not found", isFound: false, status: 403})
         }
     });
 });
@@ -76,7 +76,7 @@ app.post('/login', function(req, res) {
             if (err) {console.log(err);}
             if (result) {
               // passwords match! log user in
-              jwt.sign({ username: user.username }, process.env.SECRET_ENV, (err, token) => {
+              jwt.sign({ username: user.username }, process.env.SECRET_ENV, { expiresIn: '24h'}, (err, token) => {
                 res.json({ message: "Auth Passed", token: token, match: true })
               })
             } else {
@@ -96,12 +96,12 @@ app.post('/login', function(req, res) {
       })
 })
 app.post('/session', function(req, res, next) {
-    const token = req.body.session.split("\"")[1]
+    const token = req.body.session
     jwt.verify(token, process.env.SECRET_ENV, (err, authData) => {
         if (err) {
-            res.json(req.body.session)
+            res.json({tokenMatch: false})
         } else {
-            res.json({tokenMatch: true, authData})
+            res.json({tokenMatch: true, authData, token})
         }
     })
 })
