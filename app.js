@@ -19,7 +19,9 @@ const User = mongoose.model(
     "User",
     new Schema({
         username: { type: String, required: true },
-        password: { type: String, required: true }
+        password: { type: String, required: true },
+        createdAt: { type: Date, required: true },
+        updatedAt: { type: Date, required: true }
     })
 );
 
@@ -39,6 +41,7 @@ app.listen(port, () => console.log(`app listening on port ${port}!`));
 //     res.sendFile(path.join(__dirname, '../hoot-app/build/index.html'));
 // })
 
+
 app.post('/signup', (req, res, next) => {
     // res.json({msg: `${req.body.username}`})
     bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
@@ -46,10 +49,14 @@ app.post('/signup', (req, res, next) => {
         
         const user = new User({
             username: req.body.username,
-            password: hashedPassword
+            password: hashedPassword,
+            createdAt: req.body.createdAt,
+            updatedAt: req.body.updatedAt
           }).save(err => {
             if (err) { 
               return next(err);
+            } else {
+                res.json({message: "sign up complete"})
             }
         });
     })
@@ -78,10 +85,11 @@ app.post('/login', function(req, res) {
               // passwords match! log user in
               jwt.sign({ username: user.username }, process.env.SECRET_ENV, { expiresIn: '24h'}, (err, token) => {
                 res.json({ message: "Auth Passed", token: token, match: true })
+                // res.redirect('http://localhost:3000/home').end()
               })
             } else {
               // passwords do not match!
-              return res.status(403).json({message: "Incorrect password", match: false})
+              return res.json({message: "Incorrect password", match: false})
             }
         })
         // if (user.password !== req.body.password) {
