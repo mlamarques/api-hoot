@@ -6,7 +6,7 @@ module.exports = async (req, res, next) => {
   const authHeaders = req.headers.authorization;
 
   if (!authHeaders) {
-    return res.status(401).json({
+    return res.json({
       message: "Ocorreu um problema na autenticação"
     });
   }
@@ -17,9 +17,8 @@ module.exports = async (req, res, next) => {
     jwt.verify(token, process.env.SECRET_ENV, (err, authData) => {
         if (err) {
             res.json({tokenMatch: false})
-        } else {
-            res.json({tokenMatch: true, authData, token})
         }
+        res.json({tokenMatch: true, authData, token})
     })
     // const decoded = await promisify(jwt.verify)(token, authConfig.secret);
     // req.userId = decoded.id;

@@ -15,6 +15,8 @@ router.post('/signup', userController.user_create_post);
 router.use(authMiddleware);	// Sem autenticação, todas as rotas abaixo são bloqueadas
 
 // Check token
-router.get('/session');
+router.get('/session', (req, res) => {               
+    return     
+  });
 
 module.exports = router;

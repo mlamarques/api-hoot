@@ -6,15 +6,15 @@ const jwt = require('jsonwebtoken')
 
 // Find username in db.
 exports.username = function(req, res, next) {
-    console.log(req.body)
     User.findOne({username: req.body.username}, function (err, user) {
         if (err) { return next(err); }
         
         if (user) {
-            res.status(200).json({message: "User found", isFound: true})
+            res.json({message: "User found", isFound: true})
         } else {
-            return res.status(403).json({message: "User not found", isFound: false, status: 403})
+            return res.json({message: "User not found", isFound: false, status: 403})
         }
+        
     })
 };
 
@@ -29,7 +29,7 @@ exports.password = function(req, res, next) {
             if (result) {
               // passwords match! log user in
               jwt.sign({ username: user.username }, process.env.SECRET_ENV, { expiresIn: '24h'}, (err, token) => {
-                res.json({ message: "Auth Passed", token: token, match: true })
+                return res.json({ message: "Auth Passed", token: token, match: true })
               })
             } else {
               // passwords do not match!
