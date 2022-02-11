@@ -12,9 +12,8 @@ exports.username = function(req, res, next) {
         if (user) {
             res.json({message: "User found", isFound: true})
         } else {
-            return res.json({message: "User not found", isFound: false, status: 403})
-        }
-        
+            return res.json({message: "User not found", isFound: false, status: 403, q: req.body})
+        } 
     })
 };
 
@@ -41,7 +40,6 @@ exports.password = function(req, res, next) {
 
 // Handle user create on POST.
 exports.user_create_post = [
-
     // Validate and sanitize fields.
     body('username').trim().isLength({ min: 1 }).escape().withMessage('Username must be specified.')
         .isAlphanumeric().withMessage('First name has non-alphanumeric characters.'),
@@ -63,23 +61,52 @@ exports.user_create_post = [
         else {
             // Data from form is valid.
 
-            // Create an User object with escaped and trimmed data.
-            bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
-                if (err) return next(err)
-                
-                const user = new User({
-                    username: req.body.username,
-                    password: hashedPassword,
-                    createdAt: req.body.createdAt,
-                    updatedAt: req.body.updatedAt
-                  })
-                user.save(err => {
-                    if (err) { 
-                      return next(err);
-                    }
-                    res.json({message: "sign up complete"})
-                });
+            // Check if user exists
+            User.findOne({username: req.body.username}, function (err, user) {
+                if (err) { return next(err); }
+
+                if (user) {
+                    return res.json({ message: "User already exists"})
+                } else {
+                    // Create an User object with escaped and trimmed data.
+                    bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
+                        if (err) return next(err)
+                        
+                        const user = new User({
+                            username: req.body.username,
+                            password: hashedPassword,
+                            createdAt: req.body.createdAt,
+                            updatedAt: req.body.updatedAt
+                        })
+                        user.save(err => {
+                            if (err) { 
+                            return next(err);
+                            }
+                            res.json({message: "sign up complete"})
+                        });
+                    })
+                }
             })
         }
     }
 ]
+
+// TESTS
+
+exports.test_get = function(req, res, next) {
+    res.json({message: "ok"})
+}
+
+exports.test_post = function(req, res, next) {
+    res.json({message: "ok"})
+}
+
+exports.test_list = function(req, res, next) {
+    User.find()
+        .exec(function(err, users) {
+            if (err) { return next(err); }
+            console.log(users[0])
+            res.json({ users: users});
+        })
+}
+

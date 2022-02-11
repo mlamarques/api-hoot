@@ -1,5 +1,6 @@
 const express = require('express')
 require('dotenv').config()
+require('./database/mongoConfig')
 const cors = require('cors');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -7,15 +8,14 @@ const path = require('path')
 const session = require('express-session')
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+// const mongoose = require('mongoose')
 
 const userRouter = require('./routes/routes');
 
-const mongoDB = process.env.MONGODB_URI
-mongoose.connect(mongoDB, { useUnifiedTopology: true, useNewUrlParser: true })
-const db = mongoose.connection
-db.on('error', console.error.bind(console, "mongo connection error"))
+// const mongoDB = process.env.MONGODB_URI
+// mongoose.connect(mongoDB, { useUnifiedTopology: true, useNewUrlParser: true })
+// const db = mongoose.connection
+// db.on('error', console.error.bind(console, "mongo connection error"))
 
 // const User = mongoose.model(
 //     "User",
@@ -36,9 +36,11 @@ app.use(express.json())
 
 app.use('/', userRouter);
 
-const port = process.env.PORT || 3000
+module.exports = app
 
-app.listen(port, () => console.log(`app listening on port ${port}!`));
+// const port = process.env.PORT || 3000
+
+// app.listen(port, () => console.log(`app listening on port ${port}!`));
 
 // // app.get('/', (req, res) => {
 // //     res.sendFile(path.join(__dirname, '../hoot-app/build/index.html'));
