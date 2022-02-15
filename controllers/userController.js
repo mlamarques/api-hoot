@@ -35,7 +35,7 @@ exports.password = function(req, res, next) {
     User.findOne({username: req.body.username}, function (err, user) {
         if (err) { return next(err); }
         
-        const { _id, username } = user
+        const { _id, username, img_url } = user
 
         bcrypt.compare(req.body.password, user.password, (err, result) => {
             if (err) {console.log(err);}
@@ -43,7 +43,7 @@ exports.password = function(req, res, next) {
               // passwords match! log user in
               jwt.sign({ username: user.username }, process.env.SECRET_ENV, { expiresIn: '24h'}, (err, token) => {
                 
-                return res.json({ message: "Auth Passed", token: token, _id, username , match: true })
+                return res.json({ message: "Auth Passed", token: token, _id, username, img_url , match: true })
               })
             } else {
               // passwords do not match!
@@ -60,6 +60,7 @@ exports.user_create_post = [
         .isAlphanumeric().withMessage('First name has non-alphanumeric characters.'),
     body('password').trim().isLength({ min: 8 }).escape().withMessage('Password must be at least 8 characters.')
         .isAlphanumeric().withMessage('Password has non-alphanumeric characters.'),
+    body('img_url').trim().isLength({ min: 40 }).withMessage('img url must exist'),
     body('createdAt').trim().isLength({ min: 1 }).escape().withMessage('Time not specified.'),
     body('updatedAt').trim().isLength({ min: 1 }).escape().withMessage('Update not specified.'),
 
@@ -90,6 +91,7 @@ exports.user_create_post = [
                         const user = new User({
                             username: req.body.username,
                             password: hashedPassword,
+                            img_url: req.body.img_url,
                             createdAt: req.body.createdAt,
                             updatedAt: req.body.updatedAt
                         })
@@ -105,6 +107,17 @@ exports.user_create_post = [
         }
     }
 ]
+
+// User page
+exports.user_page = function (req, res) {
+    User.findOne({username: req.body.username}, function (err, user) {
+        if (err) { return next(err); }
+        
+        const { username, createdAt, img_url} = user
+
+        return res.json({ username , createdAt, img_url })
+    })
+}
 
 // TESTS
 
