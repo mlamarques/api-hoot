@@ -4,6 +4,7 @@ const authMiddleware = require('../middlewares/auth');
 
 // Require controller modules.
 const userController = require('../controllers/userController');
+const hootController = require('../controllers/hootController');
 
 // Login page.
 router.post('/usercheck', userController.username);
@@ -22,6 +23,8 @@ router.use(authMiddleware);	// Sem autenticação, todas as rotas abaixo são bl
 router.get('/session', (req, res) => {               
     return     
   });
+
+  router.post('/compose/hoot', hootController.hoot_compose_post);
 
 
 

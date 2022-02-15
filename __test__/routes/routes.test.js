@@ -101,3 +101,18 @@ test("Password check", done => {
           match: true
       }, done);
 });
+
+test("Create new user", done => {
+    request(app)
+      .post("/signup")
+      .type('form')
+      .send({
+          username: 'jon',
+          password: 'password'
+        })
+      .expect({
+          message: "Auth Passed",
+          token: token,
+          match: true
+      }, done);
+});
