@@ -17,18 +17,33 @@ exports.username = function(req, res, next) {
     })
 };
 
+// Search users in db 
+exports.usernames_search = function(req, res, next) {
+    User.find({ 'username': {$regex: `^${req.body.term}`}}, 'username')
+        .sort([['username', 'ascending']])
+        .limit( 5 )
+        .exec(function (err, list_users) {
+            if (err) { return next(err); }
+            //Successful
+            res.json({list_users})
+        })
+}
+
 // Password confirmation
 exports.password = function(req, res, next) {
 
     User.findOne({username: req.body.username}, function (err, user) {
         if (err) { return next(err); }
         
+        const { _id, username } = user
+
         bcrypt.compare(req.body.password, user.password, (err, result) => {
             if (err) {console.log(err);}
             if (result) {
               // passwords match! log user in
               jwt.sign({ username: user.username }, process.env.SECRET_ENV, { expiresIn: '24h'}, (err, token) => {
-                return res.json({ message: "Auth Passed", token: token, user, match: true })
+                
+                return res.json({ message: "Auth Passed", token: token, _id, username , match: true })
               })
             } else {
               // passwords do not match!

@@ -17,6 +17,12 @@ router.get('/test', userController.test_get);
 router.post('/test', userController.test_post);
 router.get('/usercheck', userController.test_list);
 
+// Find users
+router.post('/user/search', userController.usernames_search)
+
+// Hoot
+router.post('/compose/hoot', hootController.hoot_compose_post);
+
 router.use(authMiddleware);	// Sem autenticação, todas as rotas abaixo são bloqueadas
 
 // Check token
@@ -24,7 +30,7 @@ router.get('/session', (req, res) => {
     return     
   });
 
-  router.post('/compose/hoot', hootController.hoot_compose_post);
+  
 
 
 
