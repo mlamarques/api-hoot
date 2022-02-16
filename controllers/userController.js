@@ -1,4 +1,5 @@
 var User = require('../models/user');
+var Hoot = require('../models/hoot');
 require('dotenv').config()
 const { body,validationResult } = require('express-validator');
 const bcrypt = require('bcrypt')
@@ -110,14 +111,26 @@ exports.user_create_post = [
 
 // User page
 exports.user_page = function (req, res) {
-    User.findOne({username: req.body.username}, function (err, user) {
-        if (err) { return next(err); }
-        
-        const { username, createdAt, img_url} = user
+    User.findOne({username: req.params.user}, function (err, user) {
+        if (err) { return next(err)}
 
-        return res.json({ username , createdAt, img_url })
+        if (!user) {
+            return res.json({message: 'User dont exist'});
+        }
+        if (user) {
+            const { _id, username, createdAt, img_url} = user
+            // return res.json({ _id, username , createdAt, img_url })
+
+            Hoot.find({ 'owner' : _id})
+                .exec(function (err, list_hoots) {
+                    if (err) { return next(err); }
+                    //Successful, so render
+                    return res.json({ _id, username , createdAt, img_url, list_hoots })
+                });
+        }
     })
 }
+
 
 // TESTS
 

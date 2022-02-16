@@ -20,13 +20,19 @@ router.get('/usercheck', userController.test_list);
 // Find users
 router.post('/user/search', userController.usernames_search)
 
+// User Page
+router.get('/:user', userController.user_page)
+
+// User hoots
+// router.get('/hoots/:id', hootController.all_hoots_user)
+
 // Hoot
 router.post('/compose/hoot', hootController.hoot_compose_post);
 
 router.use(authMiddleware);	// Sem autenticação, todas as rotas abaixo são bloqueadas
 
 // Check token
-router.get('/session', (req, res) => {               
+router.get('api/session', (req, res) => {               
     return     
   });
 

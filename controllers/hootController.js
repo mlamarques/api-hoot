@@ -37,3 +37,16 @@ exports.hoot_compose_post = [
     }
 ]
 
+// All user hoots
+// exports.all_hoots_user = function (req, res, next) {
+//     Hoot.find({ 'owner' : req.params.id})
+//         .exec(function (err, list_hoots) {
+//             if (err) { return next(err); }
+//             //Successful, so render
+//             if (list_hoots.length === 0) {
+//                 return res.json({message: 'No hoots yet'});
+//             }
+//             return res.json({ list_hoots })
+//         });
+// }
+
