@@ -118,14 +118,14 @@ exports.user_page = function (req, res) {
             return res.json({message: 'User dont exist'});
         }
         if (user) {
-            const { _id, username, createdAt, img_url} = user
+            const { _id, username, createdAt, img_url, date_formatted, date_formatted_simple } = user
             // return res.json({ _id, username , createdAt, img_url })
 
             Hoot.find({ 'owner' : _id})
                 .exec(function (err, list_hoots) {
                     if (err) { return next(err); }
-                    //Successful, so render
-                    return res.json({ _id, username , createdAt, img_url, list_hoots })
+                    //Successful
+                    return res.json({ _id, username , createdAt, img_url, date_formatted, date_formatted_simple, list_hoots })
                 });
         }
     })
