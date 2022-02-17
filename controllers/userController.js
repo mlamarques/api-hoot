@@ -125,7 +125,14 @@ exports.user_page = function (req, res) {
                 .exec(function (err, list_hoots) {
                     if (err) { return next(err); }
                     //Successful
-                    return res.json({ _id, username , createdAt, img_url, date_formatted, date_formatted_simple, list_hoots })
+                    // const newList = list_hoots.map((item) => item = {...item, 'simple_date': item.date_formatted})
+                    const newList = []
+                    for (var i = 0; i < list_hoots.length; i++) {
+                        const item = list_hoots[i]
+                        const date = item.date_formatted
+                        newList.push({...list_hoots[i]._doc, new_date: date})
+                    }
+                    return res.json({ _id, username , createdAt, img_url, date_formatted, date_formatted_simple, newList })
                 });
         }
     })
