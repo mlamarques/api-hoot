@@ -14,14 +14,16 @@ module.exports = async (req, res, next) => {
   const [,token] = authHeaders.split(" ");
 
   try {
-    jwt.verify(token, process.env.SECRET_ENV, (err, authData) => {
+    const decoded = await jwt.verify(token, process.env.SECRET_ENV, (err, authData) => {
         if (err) {
             res.json({tokenMatch: false})
         }
-        res.json({tokenMatch: true, authData, token})
+        // res.json({tokenMatch: true, authData, token})
+        return authData
     })
     // const decoded = await promisify(jwt.verify)(token, authConfig.secret);
     // req.userId = decoded.id;
+    req.authData = decoded
     next();
 
   } catch(e) {

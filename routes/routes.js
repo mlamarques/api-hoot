@@ -20,8 +20,7 @@ router.get('/usercheck', userController.test_list);
 // Find users
 router.post('/user/search', userController.usernames_search)
 
-// User Page
-router.get('/:user', userController.user_page)
+
 
 // User hoots
 // router.get('/hoots/:id', hootController.all_hoots_user)
@@ -29,12 +28,21 @@ router.get('/:user', userController.user_page)
 // Hoot
 router.post('/compose/hoot', hootController.hoot_compose_post);
 
-router.use(authMiddleware);	// Sem autenticação, todas as rotas abaixo são bloqueadas
+// router.use(authMiddleware);	// Sem autenticação, todas as rotas abaixo são bloqueadas
 
 // Check token
-router.get('api/session', (req, res) => {               
-    return     
-  });
+// router.get('api/session', (req, res) => {    
+//     console.log('Session access')           
+//     console.log(req.headers.authorization)           
+//     return res.json({ isSessionActive: true })
+//   });
+
+router.get('/session', authMiddleware, (req, res) => {          
+  return res.json({ isSessionActive: true, authData: req.authData })
+});
+
+// User Page
+router.get('/user/:user', userController.user_page)
 
   
 
