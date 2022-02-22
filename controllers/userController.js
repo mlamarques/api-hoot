@@ -143,25 +143,60 @@ exports.user_page = function (req, res) {
 
 // Follow profile
 exports.follow_profile_post = function(req, res, next) {
-    // User.updateOne({"username": req.body.username}, {$addToSet: {"follows": req.body.followId} })
-    // .exec(function(err, userUpdated) {
-    //     if (err) { return next(err); }
+    User.updateOne({"username": req.body.username}, {$addToSet: {"follows": req.body.followId} })
+    .exec(function(err, updataInfo) {
+        if (err) { return next(err); }
 
-    //     res.json({message: `Following ${req.body.username}`, follows: userUpdated.follows})
-    // })
-
-    async.parallel({
-        userUpdated: function(callback) {
-            User.findOne({"username": req.body.username}).exec(callback);
-        },
-        updateFollows: function(callback) {
-            User.updateOne({"username": req.body.username}, {$addToSet: {"follows": req.body.followId} }).exec(callback);
-        },
-        }, function(err, results) {
+        User.findOne({"username": req.body.username}).exec(function(err, userUpdated) {
             if (err) { return next(err); }
-            // Success.
-            res.json({message: `Following ${req.body.username}`, follows: results.userUpdated.follows})
+
+            res.json({message: `Following ${req.body.username}`, follows: userUpdated.follows})
         });
+    })
+
+    // async.parallel({
+    //     userUpdated: function(callback) {
+    //         User.findOne({"username": req.body.username}).exec(callback);
+    //     },
+    //     updateFollows: function(callback) {
+    //         User.updateOne({"username": req.body.username}, {$addToSet: {"follows": req.body.followId} }).exec(callback);
+    //     },
+    //     }, function(err, results) {
+    //         if (err) { return next(err); }
+    //         // Success.
+    //         // const newData = User.findOne({"username": req.body.username})
+    //         console.log(results.updateFollows)
+    //         res.json({message: `Following ${req.body.username}`, follows: results.userUpdated.follows})
+    //     });
+}
+
+// Unfollow profile
+exports.unfollow_profile_post = function(req, res, next) {
+
+    // async.parallel({
+    //     userUpdated: function(callback) {
+    //         User.findOne({"username": req.body.username}).exec(callback);
+    //     },
+    //     updateFollows: function(callback) {
+    //         User.updateOne({"username": req.body.username}, {$pull: {"follows": req.body.followId} }).exec(callback);
+    //     },
+    //     }, function(err, results) {
+    //         if (err) { return next(err); }
+    //         // Success.
+            
+    //         res.json({message: `Unfollowing ${req.body.username}`, follows: results.userUpdated.follows})
+    //     });
+
+    User.updateOne({"username": req.body.username}, {$pull: {"follows": req.body.followId} })
+    .exec(function(err, updataInfo) {
+        if (err) { return next(err); }
+
+        User.findOne({"username": req.body.username}).exec(function(err, userUpdated) {
+            if (err) { return next(err); }
+
+            res.json({message: `Unfollowing ${req.body.username}`, follows: userUpdated.follows})
+        });
+    })
 }
 
 

@@ -23,6 +23,9 @@ router.post('/user/search', userController.usernames_search)
 // Follow user
 router.post('/follow', userController.follow_profile_post)
 
+// Unfollow user
+router.post('/unfollow', userController.unfollow_profile_post)
+
 
 // User hoots
 // router.get('/hoots/:id', hootController.all_hoots_user)
