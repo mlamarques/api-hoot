@@ -20,6 +20,8 @@ router.get('/usercheck', userController.test_list);
 // Find users
 router.post('/user/search', userController.usernames_search)
 
+// Follow user
+router.post('/follow', userController.follow_profile_post)
 
 
 // User hoots

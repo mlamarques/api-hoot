@@ -2,6 +2,7 @@ var User = require('../models/user');
 var Hoot = require('../models/hoot');
 require('dotenv').config()
 const { body,validationResult } = require('express-validator');
+var async = require('async');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -20,9 +21,9 @@ exports.username = function(req, res, next) {
 
 // Search users in db 
 exports.usernames_search = function(req, res, next) {
-    User.find({ 'username': {$regex: `^${req.body.term}`}}, 'username')
+    User.find({ 'username': {$regex: `^${req.body.term}`}}, 'username img_url')
         .sort([['username', 'ascending']])
-        .limit( 5 )
+        // .limit( 5 )
         .exec(function (err, list_users) {
             if (err) { return next(err); }
             //Successful
@@ -36,7 +37,7 @@ exports.password = function(req, res, next) {
     User.findOne({username: req.body.username}, function (err, user) {
         if (err) { return next(err); }
         
-        const { _id, username, img_url } = user
+        const { _id, username, img_url, follows } = user
 
         bcrypt.compare(req.body.password, user.password, (err, result) => {
             if (err) {console.log(err);}
@@ -44,7 +45,7 @@ exports.password = function(req, res, next) {
               // passwords match! log user in
               jwt.sign({ username: user.username }, process.env.SECRET_ENV, { expiresIn: '24h'}, (err, token) => {
                 
-                return res.json({ message: "Auth Passed", token: token, _id, username, img_url , match: true })
+                return res.json({ message: "Auth Passed", token: token, _id, username, img_url, follows , match: true })
               })
             } else {
               // passwords do not match!
@@ -93,6 +94,8 @@ exports.user_create_post = [
                             username: req.body.username,
                             password: hashedPassword,
                             img_url: req.body.img_url,
+                            follows: [],
+                            likes: [],
                             createdAt: req.body.createdAt,
                             updatedAt: req.body.updatedAt
                         })
@@ -136,6 +139,29 @@ exports.user_page = function (req, res) {
                 });
         }
     })
+}
+
+// Follow profile
+exports.follow_profile_post = function(req, res, next) {
+    // User.updateOne({"username": req.body.username}, {$addToSet: {"follows": req.body.followId} })
+    // .exec(function(err, userUpdated) {
+    //     if (err) { return next(err); }
+
+    //     res.json({message: `Following ${req.body.username}`, follows: userUpdated.follows})
+    // })
+
+    async.parallel({
+        userUpdated: function(callback) {
+            User.findOne({"username": req.body.username}).exec(callback);
+        },
+        updateFollows: function(callback) {
+            User.updateOne({"username": req.body.username}, {$addToSet: {"follows": req.body.followId} }).exec(callback);
+        },
+        }, function(err, results) {
+            if (err) { return next(err); }
+            // Success.
+            res.json({message: `Following ${req.body.username}`, follows: results.userUpdated.follows})
+        });
 }
 
 
