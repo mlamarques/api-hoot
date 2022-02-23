@@ -5,11 +5,11 @@ const Schema = mongoose.Schema
 const UserSchema = new Schema({
     username: { type: String, required: true },
     password: { type: String, required: true },
-    img_url: { type: String },
+    img_url: { type: String, required: true },
     follows: { type: Array },
     likes: { type: Array },
     createdAt: { type: Date, required: true },
-    updatedAt: { type: Date, required: true }
+    updatedAt: { type: Date, required: true },
 })
 
 // Virtual for date
