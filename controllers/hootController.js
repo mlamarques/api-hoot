@@ -30,7 +30,7 @@ exports.hoot_compose_post = [
             // Data from form is valid.
             hoot.save(function (err) {
                 if (err) { return next(err); }
-                   // Successful - redirect to new record.
+                   // Successful
                    res.json({message: "Hoot created"})
                 });
         }

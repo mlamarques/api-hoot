@@ -3,7 +3,7 @@ const { DateTime } = require("luxon");
 const Schema = mongoose.Schema
 
 const HootSchema = new Schema({
-    owner: { type: String, required: true },
+    owner: {type: Schema.Types.ObjectId, ref: 'User', required: true},
     box_content: {
         type: String,
         required: true,

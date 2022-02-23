@@ -141,6 +141,10 @@ exports.user_page = function (req, res) {
     })
 }
 
+// User Feed
+exports.user_feed_get = function (req, res, next) {
+}
+
 // Follow profile
 exports.follow_profile_post = function(req, res, next) {
     User.updateOne({"username": req.body.username}, {$addToSet: {"follows": req.body.followId} })

@@ -18,6 +18,9 @@ router.post('/test', userController.test_post);
 router.get('/usercheck', userController.test_list);
 
 // Find users
+router.get('/feed/:id', userController.user_feed_get)
+
+// Find users
 router.post('/user/search', userController.usernames_search)
 
 // Follow user
