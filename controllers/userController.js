@@ -3,6 +3,7 @@ var Hoot = require('../models/hoot');
 require('dotenv').config()
 const { body,validationResult } = require('express-validator');
 var async = require('async');
+const { DateTime } = require("luxon");
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -144,6 +145,41 @@ exports.user_page = function (req, res) {
 
 // User Feed
 exports.user_feed_get = function (req, res, next) {
+    User.findById(req.params.id)
+        .exec(function (err, user) {
+            Hoot.aggregate([
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "owner",
+                        foreignField: "_id",
+                        as: "owner_info",
+                    },
+                },
+                {
+                    $unwind: "$owner_info",
+                    
+                },
+                { "$project": {"owner": 1, "box_content": 1, "createdAt": 1, "owner_info.username": 1, "owner_info.img_url": 1}},
+            ])
+            .then((result) => {
+                console.log(result)
+                const tempArray = [];
+                for (let i = 0; i < result.length; i++) {
+                    if (user.follows.includes(String(result[i].owner))) {
+                        console.log("=========", result[i]);
+                        result[i].date_formatted = result[i].createdAt.toLocaleString(DateTime.DATE_MED);
+                        tempArray.push(result[i])
+                    }
+                }
+                console.log('lastList: ', tempArray);
+                res.json( { hoots: tempArray, side: tempArray[0].date_formatted } )
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+        })
+    
 }
 
 // Follow profile
