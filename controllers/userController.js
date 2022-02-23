@@ -125,6 +125,7 @@ exports.user_page = function (req, res) {
             // return res.json({ _id, username , createdAt, img_url })
 
             Hoot.find({ 'owner' : _id})
+                .sort({ createdAt : -1 })
                 .exec(function (err, list_hoots) {
                     if (err) { return next(err); }
                     //Successful
