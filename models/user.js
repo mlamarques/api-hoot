@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const { DateTime } = require("luxon");
 const Schema = mongoose.Schema
 
+const opts = { toJSON: { virtuals: true } };
 const UserSchema = new Schema({
     username: { type: String, required: true },
     password: { type: String, required: true },
@@ -10,7 +11,7 @@ const UserSchema = new Schema({
     likes: { type: Array },
     createdAt: { type: Date, required: true },
     updatedAt: { type: Date, required: true },
-})
+}, opts)
 
 // Virtual for date
 UserSchema

@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const { DateTime } = require("luxon");
 const Schema = mongoose.Schema
 
+// const opts = { toObject: { virtuals: true }, toJSON: { virtuals: true } };
 const HootSchema = new Schema({
     owner: {type: Schema.Types.ObjectId, ref: 'User', required: true},
     box_content: {
@@ -10,6 +11,9 @@ const HootSchema = new Schema({
         maxLength: 100,
     },
     createdAt: { type: Date, default: Date.now}
+}, {
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true }
 })
 
 // Virtual for date
