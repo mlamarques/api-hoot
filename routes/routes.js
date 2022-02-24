@@ -17,7 +17,7 @@ router.get('/test', userController.test_get);
 router.post('/test', userController.test_post);
 router.get('/usercheck', userController.test_list);
 
-// Find users
+// Get user feed
 router.get('/feed/:id', userController.user_feed_get)
 
 // Find users
@@ -28,6 +28,9 @@ router.post('/follow', userController.follow_profile_post)
 
 // Unfollow user
 router.post('/unfollow', userController.unfollow_profile_post)
+
+// Like Hoot
+router.post('/hoot/like', userController.hoot_like_post)
 
 
 // User hoots

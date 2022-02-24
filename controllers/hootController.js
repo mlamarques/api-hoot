@@ -19,6 +19,8 @@ exports.hoot_compose_post = [
         var hoot = new Hoot(
           { owner: req.body.owner,
             box_content: req.body.box_content,
+            likes_count: 0,
+            comments_count: 0,
             createdAt: req.body.createdAt
            });
 

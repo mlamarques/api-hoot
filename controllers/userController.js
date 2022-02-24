@@ -38,7 +38,7 @@ exports.password = function(req, res, next) {
     User.findOne({username: req.body.username}, function (err, user) {
         if (err) { return next(err); }
         
-        const { _id, username, img_url, follows } = user
+        const { _id, username, img_url, follows, likes } = user
 
         bcrypt.compare(req.body.password, user.password, (err, result) => {
             if (err) {console.log(err);}
@@ -46,7 +46,7 @@ exports.password = function(req, res, next) {
               // passwords match! log user in
               jwt.sign({ username: user.username }, process.env.SECRET_ENV, { expiresIn: '24h'}, (err, token) => {
                 
-                return res.json({ message: "Auth Passed", token: token, _id, username, img_url, follows , match: true })
+                return res.json({ message: "Auth Passed", token: token, _id, username, img_url, follows, likes, match: true })
               })
             } else {
               // passwords do not match!
@@ -160,19 +160,17 @@ exports.user_feed_get = function (req, res, next) {
                     $unwind: "$owner_info",
                     
                 },
-                { "$project": {"owner": 1, "box_content": 1, "createdAt": 1, "owner_info.username": 1, "owner_info.img_url": 1}},
+                { "$project": {"owner": 1, "box_content": 1, "createdAt": 1, "likes_count": 1, "comments_count": 1, "owner_info.username": 1, "owner_info.img_url": 1}},
             ])
+            .sort({ createdAt : -1 })
             .then((result) => {
-                console.log(result)
                 const tempArray = [];
                 for (let i = 0; i < result.length; i++) {
                     if (user.follows.includes(String(result[i].owner))) {
-                        console.log("=========", result[i]);
                         result[i].date_formatted = result[i].createdAt.toLocaleString(DateTime.DATE_MED);
                         tempArray.push(result[i])
                     }
                 }
-                console.log('lastList: ', tempArray);
                 res.json( { hoots: tempArray, side: tempArray[0].date_formatted } )
               })
               .catch((error) => {
@@ -240,6 +238,54 @@ exports.unfollow_profile_post = function(req, res, next) {
     })
 }
 
+// Handle hoot like
+exports.hoot_like_post = function (req, res, next) {
+    const { userId, hootId } = req.body
+
+    User.findById(userId)
+        .exec(function (err, user) {
+            if (err) { return next(err); }
+
+            if (user.likes.includes(hootId)) {
+                // async parallel
+                async.parallel({
+                    // remove hootId from likes
+                    remove_from_likes: function(callback) {
+                        // User.updateOne( {_id: userId}, { $pull: { likes: hootId } }, callback );
+                        User.findOneAndUpdate( {_id: userId}, { $pull: { likes: hootId } }, { returnOriginal: false }, callback );
+                    },
+                    // hootId likesCount -1
+                    hoot_count: function(callback) {
+                        Hoot.updateOne( {_id: hootId}, { $inc: { likes_count: -1 } }, callback );
+                    },
+                }, function(err, results) {
+                    if (err) { return next(err); }
+
+                    res.json({ message: 'Like removed', user_likes: results.remove_from_likes.likes });
+                });
+                    
+                    
+            } else {
+                async.parallel({
+                    // Add hootId to likes
+                    add_to_likes: function(callback) {
+                        // User.updateOne( {_id: userId}, { $addToSet: { likes: hootId } }, callback );
+                        User.findOneAndUpdate( {_id: userId}, { $addToSet: { likes: hootId } }, { returnOriginal: false }, callback );
+                    },
+                    // hootId likesCount +1
+                    hoot_count: function(callback) {
+                        Hoot.updateOne( {_id: hootId}, { $inc: { likes_count: +1 } }, callback );
+                    },
+                }, function(err, results) {
+                    if (err) { return next(err); }
+
+
+
+                    res.json({ message: 'Like added', user_likes: results.add_to_likes.likes });
+                });
+            }
+        })
+}
 
 // TESTS
 
