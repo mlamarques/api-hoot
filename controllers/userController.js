@@ -9,11 +9,13 @@ const jwt = require('jsonwebtoken')
 
 // Find username in db.
 exports.username = function(req, res, next) {
-    User.findOne({username: req.body.username}, function (err, user) {
+
+    const reqLowercase = req.body.username.toLowerCase();
+
+    User.findOne({ "lowercase_username": reqLowercase }, function (err, user) {
         if (err) { return next(err); }
-        
         if (user) {
-            res.json({message: "User found", isFound: true})
+            return res.json({message: "User found", isFound: true, username: user.username})
         } else {
             return res.json({message: "User not found", isFound: false, status: 403})
         } 
@@ -78,10 +80,11 @@ exports.user_create_post = [
             return;
         }
         else {
+            const reqLowercase = req.body.username.toLowerCase();
             // Data from form is valid.
 
             // Check if user exists
-            User.findOne({username: req.body.username}, function (err, user, next) {
+            User.findOne({ "lowercase_username": reqLowercase }, function (err, user, next) {
                 if (err) { return next(err); }
 
                 if (user) {
