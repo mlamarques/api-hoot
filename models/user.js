@@ -27,4 +27,18 @@ UserSchema
     return DateTime.fromJSDate(this.createdAt).toLocaleString({ month: 'long', year: 'numeric' });
 });
 
+// Virtual following count
+UserSchema
+  .virtual('following_count')
+  .get(function () {
+    return this.following ? this.following.length : 0;
+});
+
+// Virtual followers count
+UserSchema
+  .virtual('followers_count')
+  .get(function () {
+    return this.following ? this.following.length : 0;
+});
+
 module.exports = mongoose.model('User', UserSchema);

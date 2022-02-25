@@ -15,7 +15,7 @@ exports.username = function(req, res, next) {
         if (user) {
             res.json({message: "User found", isFound: true})
         } else {
-            return res.json({message: "User not found", isFound: false, status: 403, q: req.body})
+            return res.json({message: "User not found", isFound: false, status: 403})
         } 
     })
 };
@@ -26,6 +26,7 @@ exports.usernames_search = function(req, res, next) {
         .sort([['username', 'ascending']])
         // .limit( 5 )
         .exec(function (err, list_users) {
+            console.log(list_users[0].following_count)
             if (err) { return next(err); }
             //Successful
             res.json({list_users})
@@ -123,7 +124,7 @@ exports.user_page = function (req, res) {
             return res.json({message: 'User dont exist'});
         }
         if (user) {
-            const { _id, username, createdAt, img_url, following, followers, date_formatted, date_formatted_simple } = user
+            const { _id, username, createdAt, img_url, following, following_count, followers_count, date_formatted, date_formatted_simple } = user
             // return res.json({ _id, username , createdAt, img_url })
 
             Hoot.find({ 'owner' : _id})
@@ -138,7 +139,7 @@ exports.user_page = function (req, res) {
                         const date = item.date_formatted
                         newList.push({...list_hoots[i]._doc, new_date: date})
                     }
-                    return res.json({ _id, username , createdAt, img_url, following, followers, date_formatted, date_formatted_simple, newList })
+                    return res.json({ _id, username , createdAt, img_url, following, following_count, followers_count, date_formatted, date_formatted_simple, newList })
                 });
         }
     })
@@ -217,7 +218,7 @@ exports.unfollow_profile_post = function(req, res, next) {
     }, function(err, results) {
         if (err) { return next(err); }
 
-        res.json({ message: 'Unfollowing', following: results.add_followId_following.following });
+        res.json({ message: 'Unfollowing', following: results.remove_followId_following.following });
     });
 }
 
