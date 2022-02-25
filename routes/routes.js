@@ -32,12 +32,16 @@ router.post('/unfollow', userController.unfollow_profile_post)
 // Like Hoot
 router.post('/hoot/like', userController.hoot_like_post)
 
+// Get all liked hoots
+router.get('/:userId/likes/', userController.user_likes_get);
+
 
 // User hoots
 // router.get('/hoots/:id', hootController.all_hoots_user)
 
-// Hoot
+// Create Hoot
 router.post('/compose/hoot', hootController.hoot_compose_post);
+
 
 // router.use(authMiddleware);	// Sem autenticação, todas as rotas abaixo são bloqueadas
 

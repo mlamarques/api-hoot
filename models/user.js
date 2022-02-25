@@ -14,6 +14,13 @@ const UserSchema = new Schema({
     updatedAt: { type: Date, required: true },
 }, opts)
 
+// Virtual for lowercase name
+UserSchema
+  .virtual('lowercase_username')
+  .get(function () {
+    return this.username.toLowerCase() || '';
+});
+
 // Virtual for date
 UserSchema
   .virtual('date_formatted')

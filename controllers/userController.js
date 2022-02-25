@@ -10,12 +10,9 @@ const jwt = require('jsonwebtoken')
 // Find username in db.
 exports.username = function(req, res, next) {
 
-    // const reqLowercase = req.body.username.toLowerCase();
-    // console.log(reqLowercase)
-
     User.findOne({ username: { $regex : new RegExp(req.body.username, "i") } }, function (err, user) {
         if (err) { return next(err); }
-        console.log(user)
+
         if (user) {
             return res.json({message: "User found", isFound: true, username: user.username})
         } else {
@@ -273,6 +270,26 @@ exports.hoot_like_post = function (req, res, next) {
             }
         })
 }
+
+// Get User likes
+exports.user_likes_get = function (req, res, next) {
+    const order = { _id : -1 }
+    User.findById(req.params.userId)
+        .populate({
+            path : 'likes',
+            // options: { sort: { $natural: -1 } },
+            populate : {
+              path : 'owner',
+            },
+            // options: { sort: 'likes' },
+          })
+        .exec(function (err, user) {
+
+            const hoots_list = user.likes.reverse()
+
+            res.json({hoots_list})
+        })
+} 
 
 // TESTS
 

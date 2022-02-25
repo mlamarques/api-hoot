@@ -39,6 +39,8 @@ exports.hoot_compose_post = [
     }
 ]
 
+
+
 // All user hoots
 // exports.all_hoots_user = function (req, res, next) {
 //     Hoot.find({ 'owner' : req.params.id})
