@@ -26,7 +26,6 @@ exports.usernames_search = function(req, res, next) {
         .sort([['username', 'ascending']])
         // .limit( 5 )
         .exec(function (err, list_users) {
-            console.log(list_users[0].following_count)
             if (err) { return next(err); }
             //Successful
             res.json({list_users})
@@ -82,7 +81,7 @@ exports.user_create_post = [
             // Data from form is valid.
 
             // Check if user exists
-            User.findOne({username: req.body.username}, function (err, user) {
+            User.findOne({username: req.body.username}, function (err, user, next) {
                 if (err) { return next(err); }
 
                 if (user) {
@@ -116,8 +115,8 @@ exports.user_create_post = [
 ]
 
 // User page
-exports.user_page = function (req, res) {
-    User.findOne({username: req.params.user}, function (err, user) {
+exports.user_page = function (req, res, next) {
+    User.findOne({username: req.params.user}, function (err, user, next) {
         if (err) { return next(err)}
 
         if (!user) {
@@ -195,7 +194,7 @@ exports.follow_profile_post = function(req, res, next) {
         add_followId_following: function(callback) {
             User.findOneAndUpdate( {_id: userId}, { $addToSet: { "following": followId } }, { returnOriginal: false }, callback );
         },
-    }, function(err, results) {
+    }, function(err, results, next) {
         if (err) { return next(err); }
 
         res.json({ message: 'Following', following: results.add_followId_following.following });
@@ -215,7 +214,7 @@ exports.unfollow_profile_post = function(req, res, next) {
         remove_followId_following: function(callback) {
             User.findOneAndUpdate( {_id: userId}, { $pull: { "following": followId } }, { returnOriginal: false }, callback );
         },
-    }, function(err, results) {
+    }, function(err, results, next) {
         if (err) { return next(err); }
 
         res.json({ message: 'Unfollowing', following: results.remove_followId_following.following });
@@ -227,7 +226,7 @@ exports.hoot_like_post = function (req, res, next) {
     const { userId, hootId } = req.body
 
     User.findById(userId)
-        .exec(function (err, user) {
+        .exec(function (err, user, next) {
             if (err) { return next(err); }
 
             if (user.likes.includes(hootId)) {
@@ -242,7 +241,7 @@ exports.hoot_like_post = function (req, res, next) {
                     hoot_count: function(callback) {
                         Hoot.updateOne( {_id: hootId}, { $inc: { likes_count: -1 } }, callback );
                     },
-                }, function(err, results) {
+                }, function(err, results, next) {
                     if (err) { return next(err); }
 
                     res.json({ message: 'Like removed', user_likes: results.remove_from_likes.likes });
@@ -260,7 +259,7 @@ exports.hoot_like_post = function (req, res, next) {
                     hoot_count: function(callback) {
                         Hoot.updateOne( {_id: hootId}, { $inc: { likes_count: +1 } }, callback );
                     },
-                }, function(err, results) {
+                }, function(err, results, next) {
                     if (err) { return next(err); }
 
 
