@@ -96,6 +96,7 @@ exports.user_create_post = [
                             password: hashedPassword,
                             img_url: req.body.img_url,
                             following: [],
+                            followers: [],
                             likes: [],
                             createdAt: req.body.createdAt,
                             updatedAt: req.body.updatedAt
@@ -188,6 +189,22 @@ exports.follow_profile_post = function(req, res, next) {
 
             res.json({message: `Following ${req.body.username}`, following: userUpdated.following})
         })
+
+    async.parallel({
+        // remove hootId from likes
+        remove_from_likes: function(callback) {
+            // User.updateOne( {_id: userId}, { $pull: { likes: hootId } }, callback );
+            User.findOneAndUpdate( {_id: userId}, { $pull: { likes: hootId } }, { returnOriginal: false }, callback );
+        },
+        // hootId likesCount -1
+        hoot_count: function(callback) {
+            Hoot.updateOne( {_id: hootId}, { $inc: { likes_count: -1 } }, callback );
+        },
+    }, function(err, results) {
+        if (err) { return next(err); }
+
+        res.json({ message: 'Like removed', user_likes: results.remove_from_likes.likes });
+    });
 }
 
 // Unfollow profile
