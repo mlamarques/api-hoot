@@ -38,7 +38,7 @@ exports.password = function(req, res, next) {
     User.findOne({username: req.body.username}, function (err, user) {
         if (err) { return next(err); }
         
-        const { _id, username, img_url, follows, likes } = user
+        const { _id, username, img_url, following, likes } = user
 
         bcrypt.compare(req.body.password, user.password, (err, result) => {
             if (err) {console.log(err);}
@@ -46,7 +46,7 @@ exports.password = function(req, res, next) {
               // passwords match! log user in
               jwt.sign({ username: user.username }, process.env.SECRET_ENV, { expiresIn: '24h'}, (err, token) => {
                 
-                return res.json({ message: "Auth Passed", token: token, _id, username, img_url, follows, likes, match: true })
+                return res.json({ message: "Auth Passed", token: token, _id, username, img_url, following, likes, match: true })
               })
             } else {
               // passwords do not match!
@@ -95,7 +95,7 @@ exports.user_create_post = [
                             username: req.body.username,
                             password: hashedPassword,
                             img_url: req.body.img_url,
-                            follows: [],
+                            following: [],
                             likes: [],
                             createdAt: req.body.createdAt,
                             updatedAt: req.body.updatedAt
@@ -122,7 +122,7 @@ exports.user_page = function (req, res) {
             return res.json({message: 'User dont exist'});
         }
         if (user) {
-            const { _id, username, createdAt, img_url, follows, date_formatted, date_formatted_simple } = user
+            const { _id, username, createdAt, img_url, following, date_formatted, date_formatted_simple } = user
             // return res.json({ _id, username , createdAt, img_url })
 
             Hoot.find({ 'owner' : _id})
@@ -137,7 +137,7 @@ exports.user_page = function (req, res) {
                         const date = item.date_formatted
                         newList.push({...list_hoots[i]._doc, new_date: date})
                     }
-                    return res.json({ _id, username , createdAt, img_url, follows, date_formatted, date_formatted_simple, newList })
+                    return res.json({ _id, username , createdAt, img_url, following, date_formatted, date_formatted_simple, newList })
                 });
         }
     })
@@ -166,7 +166,7 @@ exports.user_feed_get = function (req, res, next) {
             .then((result) => {
                 const tempArray = [];
                 for (let i = 0; i < result.length; i++) {
-                    if (user.follows.includes(String(result[i].owner))) {
+                    if (user.following.includes(String(result[i].owner))) {
                         result[i].date_formatted = result[i].createdAt.toLocaleString(DateTime.DATE_MED);
                         tempArray.push(result[i])
                     }
@@ -182,14 +182,14 @@ exports.user_feed_get = function (req, res, next) {
 
 // Follow profile
 exports.follow_profile_post = function(req, res, next) {
-    User.updateOne({"username": req.body.username}, {$addToSet: {"follows": req.body.followId} })
+    User.updateOne({"username": req.body.username}, {$addToSet: {"following": req.body.followId} })
     .exec(function(err, updataInfo) {
         if (err) { return next(err); }
 
         User.findOne({"username": req.body.username}).exec(function(err, userUpdated) {
             if (err) { return next(err); }
 
-            res.json({message: `Following ${req.body.username}`, follows: userUpdated.follows})
+            res.json({message: `Following ${req.body.username}`, following: userUpdated.following})
         });
     })
 
@@ -198,14 +198,14 @@ exports.follow_profile_post = function(req, res, next) {
     //         User.findOne({"username": req.body.username}).exec(callback);
     //     },
     //     updateFollows: function(callback) {
-    //         User.updateOne({"username": req.body.username}, {$addToSet: {"follows": req.body.followId} }).exec(callback);
+    //         User.updateOne({"username": req.body.username}, {$addToSet: {"following": req.body.followId} }).exec(callback);
     //     },
     //     }, function(err, results) {
     //         if (err) { return next(err); }
     //         // Success.
     //         // const newData = User.findOne({"username": req.body.username})
     //         console.log(results.updateFollows)
-    //         res.json({message: `Following ${req.body.username}`, follows: results.userUpdated.follows})
+    //         res.json({message: `Following ${req.body.username}`, following: results.userUpdated.following})
     //     });
 }
 
@@ -217,23 +217,23 @@ exports.unfollow_profile_post = function(req, res, next) {
     //         User.findOne({"username": req.body.username}).exec(callback);
     //     },
     //     updateFollows: function(callback) {
-    //         User.updateOne({"username": req.body.username}, {$pull: {"follows": req.body.followId} }).exec(callback);
+    //         User.updateOne({"username": req.body.username}, {$pull: {"following": req.body.followId} }).exec(callback);
     //     },
     //     }, function(err, results) {
     //         if (err) { return next(err); }
     //         // Success.
             
-    //         res.json({message: `Unfollowing ${req.body.username}`, follows: results.userUpdated.follows})
+    //         res.json({message: `Unfollowing ${req.body.username}`, following: results.userUpdated.following})
     //     });
 
-    User.updateOne({"username": req.body.username}, {$pull: {"follows": req.body.followId} })
+    User.updateOne({"username": req.body.username}, {$pull: {"following": req.body.followId} })
     .exec(function(err, updataInfo) {
         if (err) { return next(err); }
 
         User.findOne({"username": req.body.username}).exec(function(err, userUpdated) {
             if (err) { return next(err); }
 
-            res.json({message: `Unfollowing ${req.body.username}`, follows: userUpdated.follows})
+            res.json({message: `Unfollowing ${req.body.username}`, following: userUpdated.following})
         });
     })
 }
