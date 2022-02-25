@@ -122,7 +122,7 @@ exports.user_page = function (req, res) {
             return res.json({message: 'User dont exist'});
         }
         if (user) {
-            const { _id, username, createdAt, img_url, date_formatted, date_formatted_simple } = user
+            const { _id, username, createdAt, img_url, follows, date_formatted, date_formatted_simple } = user
             // return res.json({ _id, username , createdAt, img_url })
 
             Hoot.find({ 'owner' : _id})
@@ -137,7 +137,7 @@ exports.user_page = function (req, res) {
                         const date = item.date_formatted
                         newList.push({...list_hoots[i]._doc, new_date: date})
                     }
-                    return res.json({ _id, username , createdAt, img_url, date_formatted, date_formatted_simple, newList })
+                    return res.json({ _id, username , createdAt, img_url, follows, date_formatted, date_formatted_simple, newList })
                 });
         }
     })
@@ -171,7 +171,7 @@ exports.user_feed_get = function (req, res, next) {
                         tempArray.push(result[i])
                     }
                 }
-                res.json( { hoots: tempArray, side: tempArray[0].date_formatted } )
+                res.json( { hoots: tempArray } )
               })
               .catch((error) => {
                 console.log(error);
