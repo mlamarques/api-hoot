@@ -182,60 +182,23 @@ exports.user_feed_get = function (req, res, next) {
 
 // Follow profile
 exports.follow_profile_post = function(req, res, next) {
-    User.updateOne({"username": req.body.username}, {$addToSet: {"following": req.body.followId} })
-    .exec(function(err, updataInfo) {
-        if (err) { return next(err); }
-
-        User.findOne({"username": req.body.username}).exec(function(err, userUpdated) {
+    User.findOneAndUpdate( { "username": req.body.username }, { $addToSet: { "following": req.body.followId } }, { returnOriginal: false })
+        .exec(function(err, userUpdated) {
             if (err) { return next(err); }
 
             res.json({message: `Following ${req.body.username}`, following: userUpdated.following})
-        });
-    })
-
-    // async.parallel({
-    //     userUpdated: function(callback) {
-    //         User.findOne({"username": req.body.username}).exec(callback);
-    //     },
-    //     updateFollows: function(callback) {
-    //         User.updateOne({"username": req.body.username}, {$addToSet: {"following": req.body.followId} }).exec(callback);
-    //     },
-    //     }, function(err, results) {
-    //         if (err) { return next(err); }
-    //         // Success.
-    //         // const newData = User.findOne({"username": req.body.username})
-    //         console.log(results.updateFollows)
-    //         res.json({message: `Following ${req.body.username}`, following: results.userUpdated.following})
-    //     });
+        })
 }
 
 // Unfollow profile
 exports.unfollow_profile_post = function(req, res, next) {
 
-    // async.parallel({
-    //     userUpdated: function(callback) {
-    //         User.findOne({"username": req.body.username}).exec(callback);
-    //     },
-    //     updateFollows: function(callback) {
-    //         User.updateOne({"username": req.body.username}, {$pull: {"following": req.body.followId} }).exec(callback);
-    //     },
-    //     }, function(err, results) {
-    //         if (err) { return next(err); }
-    //         // Success.
-            
-    //         res.json({message: `Unfollowing ${req.body.username}`, following: results.userUpdated.following})
-    //     });
-
-    User.updateOne({"username": req.body.username}, {$pull: {"following": req.body.followId} })
-    .exec(function(err, updataInfo) {
-        if (err) { return next(err); }
-
-        User.findOne({"username": req.body.username}).exec(function(err, userUpdated) {
+    User.findOneAndUpdate( { "username": req.body.username }, { $pull: { "following": req.body.followId } }, { returnOriginal: false })
+        .exec(function(err, userUpdated) {
             if (err) { return next(err); }
 
             res.json({message: `Unfollowing ${req.body.username}`, following: userUpdated.following})
-        });
-    })
+        })
 }
 
 // Handle hoot like
