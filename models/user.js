@@ -7,9 +7,9 @@ const UserSchema = new Schema({
     username: { type: String, required: true },
     password: { type: String, required: true },
     img_url: { type: String, required: true },
-    following: { type: Array },
+    following: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     followers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    likes: [{ type: Schema.Types.ObjectId, ref: 'Hoot' }],
     createdAt: { type: Date, required: true },
     updatedAt: { type: Date, required: true },
 }, opts)
