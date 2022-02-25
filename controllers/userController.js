@@ -10,10 +10,12 @@ const jwt = require('jsonwebtoken')
 // Find username in db.
 exports.username = function(req, res, next) {
 
-    const reqLowercase = req.body.username.toLowerCase();
+    // const reqLowercase = req.body.username.toLowerCase();
+    // console.log(reqLowercase)
 
-    User.findOne({ "lowercase_username": reqLowercase }, function (err, user) {
+    User.findOne({ username: { $regex : new RegExp(req.body.username, "i") } }, function (err, user) {
         if (err) { return next(err); }
+        console.log(user)
         if (user) {
             return res.json({message: "User found", isFound: true, username: user.username})
         } else {
@@ -40,7 +42,7 @@ exports.password = function(req, res, next) {
     User.findOne({username: req.body.username}, function (err, user) {
         if (err) { return next(err); }
         
-        const { _id, username, img_url, following, likes } = user
+        const { _id, username, img_url, following, followers, likes } = user
 
         bcrypt.compare(req.body.password, user.password, (err, result) => {
             if (err) {console.log(err);}
@@ -48,7 +50,7 @@ exports.password = function(req, res, next) {
               // passwords match! log user in
               jwt.sign({ username: user.username }, process.env.SECRET_ENV, { expiresIn: '24h'}, (err, token) => {
                 
-                return res.json({ message: "Auth Passed", token: token, _id, username, img_url, following, likes, match: true })
+                return res.json({ message: "Auth Passed", token: token, _id, username, img_url, following, followers, likes, match: true })
               })
             } else {
               // passwords do not match!
@@ -80,11 +82,10 @@ exports.user_create_post = [
             return;
         }
         else {
-            const reqLowercase = req.body.username.toLowerCase();
             // Data from form is valid.
 
             // Check if user exists
-            User.findOne({ "lowercase_username": reqLowercase }, function (err, user, next) {
+            User.findOne({ username: { $regex : new RegExp(req.body.username, "i") } }, function (err, user, next) {
                 if (err) { return next(err); }
 
                 if (user) {
