@@ -123,7 +123,7 @@ exports.user_page = function (req, res) {
             return res.json({message: 'User dont exist'});
         }
         if (user) {
-            const { _id, username, createdAt, img_url, following, date_formatted, date_formatted_simple } = user
+            const { _id, username, createdAt, img_url, following, followers, date_formatted, date_formatted_simple } = user
             // return res.json({ _id, username , createdAt, img_url })
 
             Hoot.find({ 'owner' : _id})
@@ -138,7 +138,7 @@ exports.user_page = function (req, res) {
                         const date = item.date_formatted
                         newList.push({...list_hoots[i]._doc, new_date: date})
                     }
-                    return res.json({ _id, username , createdAt, img_url, following, date_formatted, date_formatted_simple, newList })
+                    return res.json({ _id, username , createdAt, img_url, following, followers, date_formatted, date_formatted_simple, newList })
                 });
         }
     })
@@ -183,39 +183,42 @@ exports.user_feed_get = function (req, res, next) {
 
 // Follow profile
 exports.follow_profile_post = function(req, res, next) {
-    User.findOneAndUpdate( { "username": req.body.username }, { $addToSet: { "following": req.body.followId } }, { returnOriginal: false })
-        .exec(function(err, userUpdated) {
-            if (err) { return next(err); }
-
-            res.json({message: `Following ${req.body.username}`, following: userUpdated.following})
-        })
+    const { userId, followId } = req.body
 
     async.parallel({
-        // remove hootId from likes
-        remove_from_likes: function(callback) {
-            // User.updateOne( {_id: userId}, { $pull: { likes: hootId } }, callback );
-            User.findOneAndUpdate( {_id: userId}, { $pull: { likes: hootId } }, { returnOriginal: false }, callback );
+        // add userId to followId list of followers
+        add_userId_followers: function(callback) {
+            User.findOneAndUpdate( {_id: followId}, { $addToSet: { "followers": userId } }, { returnOriginal: false }, callback );
         },
-        // hootId likesCount -1
-        hoot_count: function(callback) {
-            Hoot.updateOne( {_id: hootId}, { $inc: { likes_count: -1 } }, callback );
+        // add followId to following list
+        add_followId_following: function(callback) {
+            User.findOneAndUpdate( {_id: userId}, { $addToSet: { "following": followId } }, { returnOriginal: false }, callback );
         },
     }, function(err, results) {
         if (err) { return next(err); }
 
-        res.json({ message: 'Like removed', user_likes: results.remove_from_likes.likes });
+        res.json({ message: 'Following', following: results.add_followId_following.following });
     });
 }
 
 // Unfollow profile
 exports.unfollow_profile_post = function(req, res, next) {
+    const { userId, followId } = req.body
 
-    User.findOneAndUpdate( { "username": req.body.username }, { $pull: { "following": req.body.followId } }, { returnOriginal: false })
-        .exec(function(err, userUpdated) {
-            if (err) { return next(err); }
+    async.parallel({
+        // remove userId to followId list of followers
+        remove_userId_followers: function(callback) {
+            User.findOneAndUpdate( {_id: followId}, { $pull: { "followers": userId } }, { returnOriginal: false }, callback );
+        },
+        // remove followId to following list
+        remove_followId_following: function(callback) {
+            User.findOneAndUpdate( {_id: userId}, { $pull: { "following": followId } }, { returnOriginal: false }, callback );
+        },
+    }, function(err, results) {
+        if (err) { return next(err); }
 
-            res.json({message: `Unfollowing ${req.body.username}`, following: userUpdated.following})
-        })
+        res.json({ message: 'Unfollowing', following: results.add_followId_following.following });
+    });
 }
 
 // Handle hoot like
