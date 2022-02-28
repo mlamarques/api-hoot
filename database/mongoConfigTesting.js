@@ -1,23 +1,8 @@
+require('dotenv').config()
 const mongoose = require("mongoose");
-const { MongoMemoryServer } = require("mongodb-memory-server");
 
-async function initializeMongoServer() {
-  const mongoServer = await MongoMemoryServer.create();
-  const mongoUri = mongoServer.getUri();
+const mongoDb = process.env.MONGODB_URI_LOCAL;
 
-  mongoose.connect(mongoUri);
-
-  mongoose.connection.on("error", e => {
-    if (e.message.code === "ETIMEDOUT") {
-      console.log(e);
-      mongoose.connect(mongoUri);
-    }
-    console.log(e);
-  });
-
-  mongoose.connection.once("open", () => {
-    console.log(`MongoDB successfully connected to ${mongoUri}`);
-  });
-}
-
-module.exports = initializeMongoServer;
+mongoose.connect(mongoDb, { useNewUrlParser: true });
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "mongo connection error"));

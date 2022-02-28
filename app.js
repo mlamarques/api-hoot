@@ -1,6 +1,7 @@
 const express = require('express')
 require('dotenv').config()
-require('./database/mongoConfig')
+// require('./database/mongoConfig')
+require('./database/mongoConfigTesting')
 const cors = require('cors');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')

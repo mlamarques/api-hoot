@@ -82,7 +82,7 @@ exports.user_create_post = [
             // Data from form is valid.
 
             // Check if user exists
-            User.findOne({ username: { $regex : new RegExp(req.body.username, "i") } }, function (err, user, next) {
+            User.findOne({ username: { $regex : new RegExp(req.body.username, "i") } }, function (err, user) {
                 if (err) { return next(err); }
 
                 if (user) {
@@ -117,7 +117,7 @@ exports.user_create_post = [
 
 // User page
 exports.user_page = function (req, res, next) {
-    User.findOne({username: req.params.user}, function (err, user, next) {
+    User.findOne({username: req.params.user}, function (err, user) {
         if (err) { return next(err)}
 
         if (!user) {
@@ -195,7 +195,7 @@ exports.follow_profile_post = function(req, res, next) {
         add_followId_following: function(callback) {
             User.findOneAndUpdate( {_id: userId}, { $addToSet: { "following": followId } }, { returnOriginal: false }, callback );
         },
-    }, function(err, results, next) {
+    }, function(err, results) {
         if (err) { return next(err); }
 
         res.json({ message: 'Following', following: results.add_followId_following.following });
@@ -215,7 +215,7 @@ exports.unfollow_profile_post = function(req, res, next) {
         remove_followId_following: function(callback) {
             User.findOneAndUpdate( {_id: userId}, { $pull: { "following": followId } }, { returnOriginal: false }, callback );
         },
-    }, function(err, results, next) {
+    }, function(err, results) {
         if (err) { return next(err); }
 
         res.json({ message: 'Unfollowing', following: results.remove_followId_following.following });
@@ -227,7 +227,7 @@ exports.hoot_like_post = function (req, res, next) {
     const { userId, hootId } = req.body
 
     User.findById(userId)
-        .exec(function (err, user, next) {
+        .exec(function (err, user) {
             if (err) { return next(err); }
 
             if (user.likes.includes(hootId)) {
@@ -242,7 +242,7 @@ exports.hoot_like_post = function (req, res, next) {
                     hoot_count: function(callback) {
                         Hoot.updateOne( {_id: hootId}, { $inc: { likes_count: -1 } }, callback );
                     },
-                }, function(err, results, next) {
+                }, function(err, results) {
                     if (err) { return next(err); }
 
                     res.json({ message: 'Like removed', user_likes: results.remove_from_likes.likes });
@@ -260,7 +260,7 @@ exports.hoot_like_post = function (req, res, next) {
                     hoot_count: function(callback) {
                         Hoot.updateOne( {_id: hootId}, { $inc: { likes_count: +1 } }, callback );
                     },
-                }, function(err, results, next) {
+                }, function(err, results) {
                     if (err) { return next(err); }
 
 
