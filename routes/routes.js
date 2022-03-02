@@ -5,6 +5,7 @@ const authMiddleware = require('../middlewares/auth');
 // Require controller modules.
 const userController = require('../controllers/userController');
 const hootController = require('../controllers/hootController');
+const messageController = require('../controllers/messageController');
 
 // Login page.
 router.post('/usercheck', userController.username);
@@ -34,6 +35,14 @@ router.post('/hoot/like', userController.hoot_like_post)
 
 // Get all liked hoots
 router.get('/:userId/likes/', userController.user_likes_get);
+
+
+// messages
+// Get all messages with users
+router.post('/messages/', messageController.messages_post);
+
+// Get message with selected user
+router.get('/messages/:id/', messageController.chat_with_user_get);
 
 
 // User hoots
