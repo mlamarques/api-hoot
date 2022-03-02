@@ -3,6 +3,7 @@ require('dotenv').config()
 // require('./database/mongoConfig')
 require('./database/mongoConfigTesting')
 const cors = require('cors');
+var helmet = require('helmet');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const path = require('path')
@@ -29,6 +30,8 @@ const userRouter = require('./routes/routes');
 // );
 
 const app = express();
+
+app.use(helmet());
 
 // app.use(session({ secret: process.env.SECRET_ENV, resave: false, saveUninitialized: true }))  
 app.use(express.urlencoded({ extended: false }))
