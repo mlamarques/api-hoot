@@ -12,7 +12,7 @@ const ContentSchema = new Schema({
 
 const DirectMessageSchema = new Schema({
     party: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    updatedAt: {  type: Date, default: Date.now, required: true },
+    updatedAt: {  type: Date, required: true },
     content: [ContentSchema],
 }, opts)
 
@@ -20,7 +20,13 @@ const DirectMessageSchema = new Schema({
 ContentSchema
   .virtual('date_formatted')
   .get(function () {
-    return DateTime.fromJSDate(this.ContentSchema.createdAt).toLocaleString(DateTime.DATE_MED); // DateTime#toLocaleString 
+    return DateTime.fromJSDate(this.createdAt).toLocaleString(DateTime.DATE_MED); // DateTime#toLocaleString 
+});
+
+DirectMessageSchema
+  .virtual('last_update_formatted')
+  .get(function () {
+    return DateTime.fromJSDate(this.updatedAt).toLocaleString(DateTime.DATE_MED); // DateTime#toLocaleString 
 });
 
 

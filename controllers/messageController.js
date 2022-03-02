@@ -2,7 +2,7 @@ var DirectMessage = require('../models/direct_message');
 const { body,validationResult } = require('express-validator');
 
 exports.messages_post = async function(req, res, next) {
-    console.log(req.body.userId)
+    
 
     // Get all messages from user
     DirectMessage.find({ party: { $in: req.body.userId } })
