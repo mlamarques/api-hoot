@@ -45,7 +45,7 @@ exports.password = function(req, res, next) {
             if (err) {console.log(err);}
             if (result) {
               // passwords match! log user in
-              jwt.sign({ username: user.username }, process.env.SECRET_ENV, { expiresIn: '24h'}, (err, token) => {
+              jwt.sign({ username: user.username, _id: user._id }, process.env.SECRET_ENV, { expiresIn: '24h'}, (err, token) => {
                 
                 return res.json({ message: "Auth Passed", token: token, _id, username, img_url, following, followers, likes, match: true })
               })
