@@ -8,7 +8,7 @@ const ContentSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     message:{ type: String, required: true, maxLength: 100 },
     createdAt: { type: Date, required: true },
-})
+}, opts)
 
 const DirectMessageSchema = new Schema({
     party: [{ type: Schema.Types.ObjectId, ref: 'User' }],

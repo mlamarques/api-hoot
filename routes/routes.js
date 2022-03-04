@@ -44,6 +44,9 @@ router.post('/messages/', messageController.messages_post);
 // Get message with selected user
 router.get('/messages/:id/', messageController.chat_with_user_get);
 
+// Post new message
+router.post('/messages/:id', messageController.send_new_message_post);
+
 
 // User hoots
 // router.get('/hoots/:id', hootController.all_hoots_user)

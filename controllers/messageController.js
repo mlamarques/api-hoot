@@ -17,6 +17,7 @@ exports.messages_post = async function(req, res, next) {
             // },
         },
         )
+        .sort({ updatedAt : -1 })
         .exec(function(err, messages) {
             if (err) { return next(err)}
 
@@ -97,4 +98,66 @@ exports.chat_with_user_get = async function (req, res, next) {
             }
         }
     })
+}
+
+exports.send_new_message_post = function (req, res, next) {
+    // check if there is already a conversation between users
+    console.log(req.params)
+    console.log(req.body.newMessage)
+
+    const users = req.params.id.split('-')
+    const [ user1, user2] = users
+
+    DirectMessage.findOne({
+        $and: [
+            { party: user1 },
+            { party: user2 },
+        ] 
+    }).exec(async function(err, conversation) {
+        if (err) { return next(err); }
+
+        // if there is, append message in content (does mongo create an _id for the message? YES), and change updatedAt field
+        if (conversation) {
+            const update = { updatedAt:  new Date(), content: [...conversation.content, {
+                userId:  req.body.userId,
+                message: req.body.newMessage,
+                createdAt:  new Date()
+            }]}
+            DirectMessage.findByIdAndUpdate(conversation._id, update, { new: true }).exec(function(err, updated) {
+                if (err) { return next(err); }
+
+                return res.json({ updated })
+            })
+        }
+
+        // if there is no conversation, create a new conversation with DirectMessage save
+        if (!conversation) {
+            var message = new DirectMessage(
+                { 
+                    party: [user1, user2],
+                    updatedAt: new Date(),
+                    content: [
+                        {
+                            userId: req.body.userId,
+                            message: req.body.newMessage,
+                            createdAt: new Date()
+                        }
+                    ]
+                });
+
+            await message.save({ new: true }, function (err, updated) {
+                if (err) { return next(err); }
+                // Successful
+                console.log('message created')
+                return res.json({ updated })
+            });
+
+            
+        }
+        
+    })
+
+    
+
+    
 }
