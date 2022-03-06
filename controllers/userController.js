@@ -291,6 +291,48 @@ exports.user_likes_get = function (req, res, next) {
         })
 } 
 
+exports.change_password_post = [
+    // Validate and sanitize fields.
+    body('currentPassword').trim().isLength({ min: 8 }).escape().withMessage('Password must be at least 8 characters.')
+        .isAlphanumeric().withMessage('Password has non-alphanumeric characters.'),
+    body('newPassword').trim().isLength({ min: 8 }).escape().withMessage('Password must be at least 8 characters.')
+        .isAlphanumeric().withMessage('Password has non-alphanumeric characters.'),
+
+    (req, res, next) => {
+
+        User.findById(req.body.userId)
+            .exec(function (err, user) {
+                if (err) { return next(err); }
+    
+                if (user) {
+                    bcrypt.compare(req.body.currentPassword, user.password, (err, result) => {
+                        if (err) {console.log(err);}
+    
+                        if (result) {
+                            // passwords match! update password
+                            bcrypt.hash(req.body.newPassword, 10, (err, hashedPassword) => {
+                                if (err) return next(err)
+                                
+                                User.findOneAndUpdate( {_id: req.body.userId}, { password: hashedPassword }, { returnOriginal: false } )
+                                    .exec(function (err, userUpdated) {
+                                        if (err) return next(err)
+                                        
+                                        res.json({message: "new password saved"})
+                                    })
+                            })
+                        } else {
+                          // passwords do not match!
+                          return res.json({message: "current password doesn't match"})
+                        }
+                    })
+                }
+            })
+    
+        // res.json({message: req.body.currentPassword})
+        
+    }
+]
+
 // TESTS
 
 exports.test_get = function(req, res, next) {

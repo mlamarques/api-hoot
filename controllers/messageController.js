@@ -102,8 +102,6 @@ exports.chat_with_user_get = async function (req, res, next) {
 
 exports.send_new_message_post = function (req, res, next) {
     // check if there is already a conversation between users
-    console.log(req.params)
-    console.log(req.body.newMessage)
 
     const users = req.params.id.split('-')
     const [ user1, user2] = users

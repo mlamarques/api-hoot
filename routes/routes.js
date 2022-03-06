@@ -24,6 +24,9 @@ router.get('/feed/:id', userController.user_feed_get)
 // Find users
 router.post('/user/search', userController.usernames_search)
 
+// Change password
+router.post('/change-password', userController.change_password_post);
+
 // Follow user
 router.post('/follow', userController.follow_profile_post)
 
