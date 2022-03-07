@@ -1,7 +1,7 @@
 const express = require('express')
 require('dotenv').config()
 // require('./database/mongoConfig')
-require('./database/mongoConfigTesting')
+require('./database/mongoConfig')
 const cors = require('cors');
 var helmet = require('helmet');
 const bcrypt = require('bcrypt')
