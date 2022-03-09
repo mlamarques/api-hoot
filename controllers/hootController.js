@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken')
 exports.hoot_compose_post = [
     // Validate and sanitize fields.
     body('owner', 'Must have an user id').trim().isLength({ min: 1 }).escape(),
-    body('box_content', 'Content must not be empty').trim().isLength({ min: 1 }).escape(),
+    body('box_content', 'Content must not be empty').trim().isLength({ min: 1 }),
     body('createdAt').trim().isLength({ min: 1 }).escape().withMessage('Time not specified.'),
 
     // Process request after validation and sanitization.
