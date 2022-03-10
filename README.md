@@ -1,50 +1,50 @@
-# STEPS
+<p align="start">
+  <img alt="Backend" src="https://img.shields.io/badge/api-Backend-red">
 
-### Start the package.json file: <code>npm init -y</code>
+  <img alt="Repository size" src="https://img.shields.io/github/repo-size/mlamarques/api-hoot">
+  
+  <img src="https://img.shields.io/github/deployments/mlamarques/api-hoot/api-hoot-alpha" alt="production status">
+  
+  <a href="https://hoot-app.vercel.app">
+    <img alt="website" src="https://img.shields.io/badge/Website-white">
+  </a>
+</p>
 
-### install express(server), mangoose(db) and passport(middleware for authentication)
+<!-- <p align="center"><img src="https://user-images.githubusercontent.com/43910483/157722999-95f32943-f6ea-4576-920a-8a5bc4615bf4.png" alt="Hoot-logo" title="Hoot-logo" /></p> -->
+![header](https://user-images.githubusercontent.com/43910483/157725366-2eb821bd-a413-4088-b940-c9fe8da359c8.png)
 
-```
-npm install express express-session mongoose passport passport-local
-```
+# Introduction
+[Hoot](https://hoot-app.vercel.app) is a twitter clone, a personal project that I developed for training and showing my Fullstack skills.
 
-### Install dotenv
+The project repository is separate in two (![Frontend](https://github.com/mlamarques/hoot-app) and ![Backend](https://github.com/mlamarques/api-hoot)).
 
-```
-npm i bcrypt
-```
+## Functionalities
 
-### Create .env file with database URI
+In the current version, you can create a user, post messages, like messages, send direct messages, follow another user and change your password.
 
-### Install bcrypt
+Demo:
 
-```
-npm install dotenv --save
-```
+https://user-images.githubusercontent.com/43910483/157718113-ed1512d2-8e83-485d-8d03-5082180c9971.mp4
 
-### Start git
+## Structure:
 
-```
-git init
-```
+![Structure](https://user-images.githubusercontent.com/43910483/157724338-546e0bf7-755f-4304-99c8-81a637bc80a1.jpg)
 
-### Create a .gitignore. Add node_modules and .env 
+## Tech stack:
+**Frontend**
+- **JavaScript**
+- **React**
+- **Styled components**
+- **Vercel**
 
-```
-# dependencies
-/node_modules
+**Backend**
+- **Express**
+- **Passport** for authentication
+- **JWT** for session control
+- **Mongoose** for MongoDB communication
+- **Jest** for testing
+- **MongoDB**
 
-# production
-/build
+You can contact me here:
 
-# misc
-.DS_Store
-.env
-```
-
-### Create the main file (app.js)
-
-### Require all dependencies
-
-### Connect to database
-
+[![Gmail Badge](https://img.shields.io/badge/-lamarques.marcos@gmail.com-c14438?style=flat-square&logo=Gmail&logoColor=white&link=mailto:lamarques.marcos@gmail.com)](mailto:lamarques.marcos@gmail.com)

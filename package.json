@@ -1,15 +1,16 @@
 {
   "name": "api-hoot",
   "version": "1.0.0",
-  "description": "Hoot app API",
+  "private": true,
+  "description": "Twitter clone, a personal project",
   "main": "app.js",
   "scripts": {
     "test": "jest",
     "dev": "nodemon server.js"
   },
-  "keywords": [],
-  "author": "mlamarques",
-  "license": "ISC",
+  "keywords": ["personal", "app", "hoot", "twitter", "clone"],
+  "author": { "name": "Marcos Lamarques", "email": "lamarques.marcos@gmail.com", "url": "https://www.linkedin.com/in/mlamarques/" },
+  "license": "MIT",
   "dependencies": {
     "async": "^3.2.3",
     "bcrypt": "^5.0.1",
