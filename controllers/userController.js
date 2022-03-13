@@ -169,7 +169,7 @@ exports.user_feed_get = function (req, res, next) {
                 const tempArray = [];
                 for (let i = 0; i < result.length; i++) {
                     if (user.following.includes(String(result[i].owner))) {
-                        result[i].date_formatted = result[i].createdAt.toLocaleString(DateTime.DATE_MED);
+                        result[i].date_formatted = DateTime.fromJSDate(result[i].createdAt).toLocaleString(DateTime.DATE_SHORT);
                         tempArray.push(result[i])
                     }
                 }
@@ -289,6 +289,11 @@ exports.user_likes_get = function (req, res, next) {
 
             res.json({hoots_list})
         })
+} 
+
+// Get user log out
+exports.user_logout_get = function (req, res, next) {
+    res.json({msg: 'ok'})
 } 
 
 exports.change_password_post = [

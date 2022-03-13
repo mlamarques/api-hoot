@@ -22,4 +22,10 @@ HootSchema
     return DateTime.fromJSDate(this.createdAt).toLocaleString(DateTime.DATE_MED); // DateTime#toLocaleString 
 });
 
+HootSchema
+  .virtual('date_short')
+  .get(function () {
+    return DateTime.fromJSDate(this.createdAt).toLocaleString(DateTime.DATE_SHORT); // DateTime#toLocaleString 
+});
+
 module.exports = mongoose.model('Hoot', HootSchema);
