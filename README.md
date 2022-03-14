@@ -23,8 +23,12 @@ The project repository is separate in two (![Frontend](https://github.com/mlamar
 In the current version, you can create a user, post messages, like messages, send direct messages, follow another user and change your password.
 
 Demo:
+<!-- Old version -->
+<!-- https://user-images.githubusercontent.com/43910483/157718113-ed1512d2-8e83-485d-8d03-5082180c9971.mp4 -->
 
-https://user-images.githubusercontent.com/43910483/157718113-ed1512d2-8e83-485d-8d03-5082180c9971.mp4
+<!-- New version -->
+
+https://user-images.githubusercontent.com/43910483/158206815-cd809965-f538-4f57-9b3e-bd1ab5943882.mp4
 
 ## Structure:
 
