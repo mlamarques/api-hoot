@@ -124,7 +124,7 @@ exports.user_page = function (req, res, next) {
             return res.json({message: 'User dont exist'});
         }
         if (user) {
-            const { _id, username, createdAt, img_url, following, following_count, followers_count, date_formatted, date_formatted_simple } = user
+            const { _id, username, createdAt, img_url, following, following_count, followers, followers_count, date_formatted, date_formatted_simple } = user
             // return res.json({ _id, username , createdAt, img_url })
 
             Hoot.find({ 'owner' : _id})
@@ -139,7 +139,7 @@ exports.user_page = function (req, res, next) {
                         const date = item.date_formatted
                         newList.push({...list_hoots[i]._doc, new_date: date})
                     }
-                    return res.json({ _id, username , createdAt, img_url, following, following_count, followers_count, date_formatted, date_formatted_simple, newList })
+                    return res.json({ _id, username , createdAt, img_url, following, following_count, followers, followers_count, date_formatted, date_formatted_simple, newList })
                 });
         }
     })

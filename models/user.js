@@ -45,7 +45,7 @@ UserSchema
 UserSchema
   .virtual('followers_count')
   .get(function () {
-    return this.following ? this.following.length : 0;
+    return this.followers ? this.followers.length : 0;
 });
 
 module.exports = mongoose.model('User', UserSchema);
