@@ -39,6 +39,8 @@ router.post('/hoot/like', userController.hoot_like_post)
 // Get all liked hoots
 router.get('/:userId/likes/', userController.user_likes_get);
 
+// Log out user
+router.get('/logout', userController.user_logout_get)
 
 // messages
 // Get all messages with users
@@ -66,6 +68,7 @@ router.post('/compose/hoot', hootController.hoot_compose_post);
 //     console.log(req.headers.authorization)           
 //     return res.json({ isSessionActive: true })
 //   });
+
 
 router.get('/session', authMiddleware, (req, res) => {          
   return res.json({ isSessionActive: true, authData: req.authData })
