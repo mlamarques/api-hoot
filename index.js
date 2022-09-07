@@ -1,5 +1,17 @@
-const app = require("./app")
+const express = require("express");
+const index = express.Router();
 
-const port = process.env.PORT || 3000
+const array = [];
 
-app.listen(port, () => console.log(`app listening on port ${port}!`));
+index.get("/", (req, res) => {
+  res.json({ name: "frodo" });
+});
+
+index.get("/test", (req, res) => res.json({ array }));
+
+index.post("/test", (req, res) => {
+  array.push(req.body.item);
+  res.send('success!');
+});
+
+module.exports = index;
