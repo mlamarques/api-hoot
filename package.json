@@ -4,9 +4,6 @@
   "private": true,
   "description": "Twitter clone, a personal project",
   "main": "app.js",
-  "engines": {
-    "node": "14.x"
-  },
   "scripts": {
     "test": "jest",
     "start": "node server.js",
